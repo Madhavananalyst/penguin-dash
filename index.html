@@ -3,6 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="screen-orientation" content="landscape">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script>
+  // Lock to landscape on mobile browsers and Capacitor WebView
+  if(screen.orientation && screen.orientation.lock){
+    screen.orientation.lock('landscape').catch(function(){});
+  }
+  // Request fullscreen on first tap — hides status bar on Android
+  document.addEventListener('click', function _fs(){
+    const el = document.documentElement;
+    if(el.requestFullscreen) el.requestFullscreen();
+    else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    document.removeEventListener('click', _fs);
+  }, {once:true});
+</script>
 <title>Penguin Dash – The Search for Meaning</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
@@ -1799,8 +1815,8 @@ function startCinematic(m){
       c.restore();
     }
 
-    const qAlpha=t<45?0:t<90?(t-45)/45:t>310?(400-t)/90:1;
-    if(t>45&&qAlpha>0){
+    const qAlpha=t<90?0:t<130?(t-90)/40:t>310?(400-t)/90:1;
+    if(t>90&&qAlpha>0){
       c.save();c.globalAlpha=Math.max(0,Math.min(1,qAlpha));
       c.fillStyle='rgba(2,8,20,.4)';
       const qFontSize=clamp(13,3.2*W/100,18);
@@ -1808,11 +1824,12 @@ function startCinematic(m){
       const lines=wrapText(cfg.introQuote,W*.68,c);
       const lineH=qFontSize*1.65;
       const totalH=lines.length*lineH+16;
-      c.fillRect(W*.14,H*.38-8,W*.72,totalH);
+      const qY=H*.52;
+      c.fillRect(W*.14,qY-8,W*.72,totalH);
       c.fillStyle='rgba(220,240,255,.92)';
-      lines.forEach((ln,i)=>c.fillText(ln,W/2,H*.38+i*lineH));
+      lines.forEach((ln,i)=>c.fillText(ln,W/2,qY+i*lineH));
       c.strokeStyle=`rgba(${modeCol},.4)`;c.lineWidth=1;
-      c.beginPath();c.moveTo(W*.3,H*.38+totalH-2);c.lineTo(W*.7,H*.38+totalH-2);c.stroke();
+      c.beginPath();c.moveTo(W*.3,qY+totalH-2);c.lineTo(W*.7,qY+totalH-2);c.stroke();
       c.restore();
     }
 
