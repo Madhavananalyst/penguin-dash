@@ -304,6 +304,24 @@ html,body{width:100%;height:100%;overflow:hidden;background:#020d1a;font-family:
 .pen-wallet{display:flex;gap:14px;justify-content:center;align-items:center;padding:8px 0 4px;flex-wrap:wrap;}
 .pen-wallet-item{font-size:12px;color:rgba(200,230,250,.7);letter-spacing:.5px;}
 
+/* ABOUT PANEL */
+.about-btn{position:absolute;top:14px;right:16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:50%;width:36px;height:36px;color:rgba(180,220,245,.7);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:5;font-family:serif;line-height:1;}
+.about-btn:hover{background:rgba(255,255,255,.15);color:white;border-color:rgba(255,255,255,.3);}
+.about-panel{position:fixed;inset:0;z-index:200;background:rgba(1,6,18,.97);display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .35s;padding:32px 24px;}
+.about-panel.open{opacity:1;pointer-events:all;}
+.about-inner{max-width:420px;width:100%;text-align:center;display:flex;flex-direction:column;align-items:center;gap:18px;}
+.about-icon{font-size:52px;animation:homeBob 3s ease-in-out infinite;}
+.about-title{font-family:'Cinzel Decorative',serif;font-size:clamp(16px,4vw,22px);color:rgba(220,240,255,.95);letter-spacing:.5px;}
+.about-body{font-style:italic;font-size:clamp(13px,3vw,15px);color:rgba(175,210,235,.75);line-height:1.85;letter-spacing:.3px;}
+.about-body a{color:#4ecdc4;text-decoration:none;border-bottom:1px solid rgba(78,205,196,.35);transition:border-color .2s,color .2s;}
+.about-body a:hover{color:#a8f0ec;border-bottom-color:rgba(168,240,236,.7);}
+.about-divider{width:60px;height:1px;background:linear-gradient(90deg,transparent,rgba(78,205,196,.4),transparent);}
+.about-credits{display:flex;flex-direction:column;gap:8px;width:100%;}
+.about-credit-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px 16px;font-size:12px;color:rgba(160,200,230,.6);letter-spacing:.5px;display:flex;align-items:center;gap:8px;}
+.about-credit-item span{font-size:16px;}
+.about-close{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:50px;padding:11px 32px;color:rgba(200,230,250,.75);font-size:14px;font-family:'EB Garamond',Georgia,serif;cursor:pointer;letter-spacing:1px;transition:all .2s;margin-top:4px;}
+.about-close:hover{background:rgba(255,255,255,.15);color:white;}
+
 /* WIN CELEBRATION */
 .win-glow{position:absolute;inset:0;z-index:19;pointer-events:none;animation:winPulse 2s ease-in-out infinite;}
 @keyframes winPulse{0%,100%{opacity:0;}50%{opacity:1;}}
@@ -357,6 +375,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#020d1a;font-family:
 
 <!-- MODE SELECT -->
 <div class="screen" id="modeScreen">
+  <button class="about-btn" onclick="openAboutPanel()" title="About this game">ℹ</button>
   <p class="mode-title">Choose your path</p>
   <p class="mode-sub">"Every road leads somewhere. Pick one and find out."</p>
   <div class="modes-wrap">
@@ -379,6 +398,24 @@ html,body{width:100%;height:100%;overflow:hidden;background:#020d1a;font-family:
     <button class="ql-btn" onclick="openStatsPanel()" style="margin-top:6px;">View My Journey Stats</button>
     <button class="ql-btn" onclick="openPenPanel()" style="margin-top:6px;">🐧 Choose Your Penguin</button>
     <button class="big-btn bb-back" onclick="showScreen('homeScreen')">← Back</button>
+  </div>
+</div>
+
+<!-- ABOUT PANEL -->
+<div class="about-panel" id="aboutPanel">
+  <div class="about-inner">
+    <div class="about-icon">🐧</div>
+    <div class="about-title">About Penguin Dash</div>
+    <div class="about-divider"></div>
+    <div class="about-body">
+      This is a hobby mini game project published on<br>
+      <a href="https://github.com/Madhavananalyst/penguin-dash" target="_blank" rel="noopener">github.com/Madhavananalyst/penguin-dash</a>
+    </div>
+    <div class="about-credits">
+      <div class="about-credit-item" style="justify-content:center;"><span>🤖</span> Code generated using Claude</div>
+    </div>
+    <div class="about-divider"></div>
+    <button class="about-close" onclick="closeAboutPanel()">✕ Close</button>
   </div>
 </div>
 
@@ -571,14 +608,14 @@ resetHomeIdle();
 // CONFIG
 // ═══════════════════════════════════════════════════
 const CFG={
-  peace:{col:'#4ecdc4',bg1:'#020d1a',bg2:'#0e2540',spd:4.5,maxSpd:5.5,hearts:0,dur:420,
+  peace:{col:'#4ecdc4',bg1:'#020d1a',bg2:'#0e2540',spd:5.5,maxSpd:5.5,hearts:0,dur:420,
     endIcon:'🌌',endTitle:'You Found the Stillness',
     endMsg:'I left the colony searching for something beyond the horizon. I walked the glaciers, crossed the sea, drifted under a thousand stars. And somewhere in the drifting, I realised — the horizon was never the destination. I was. The one walking was always the answer to the question the walking was asking.',
     endQuote:'"Thou art That. The one you seek and the one who seeks are the same." — Tat Tvam Asi, Chandogya Upanishad 6.8.7',
     btnC:'ob-p',
     introQuote:'"I found warmth in the colony. But something in me stirs — a pull toward the horizon only I can feel."',
   },
-  motivation:{col:'#f7971e',bg1:'#080600',bg2:'#180e00',spd:5.0,maxSpd:8.0,hearts:3,dur:540,
+  motivation:{col:'#f7971e',bg1:'#080600',bg2:'#180e00',spd:6.5,maxSpd:8.0,hearts:3,dur:540,
     endIcon:'🌅',endTitle:'The Climb Was the Answer',
     endMsg:'Every time I fell, I got back up — not because I knew I would make it, but because getting up was the only thing left to do. Somewhere along the way I stopped running toward an answer. I was just running. And that — the pure act of moving forward without needing it to mean something — turned out to be the only meaning there was.',
     endQuote:'"Act for the sake of action itself, not for its rewards." — Bhagavad Gita, 2.47',
@@ -5006,6 +5043,13 @@ const QL_QUOTES = [
 ];
 
 let qlCurrentTab = 'all';
+
+function openAboutPanel(){
+  document.getElementById('aboutPanel').classList.add('open');
+}
+function closeAboutPanel(){
+  document.getElementById('aboutPanel').classList.remove('open');
+}
 
 function openQuoteLibrary(){
   document.getElementById('qlPanel').classList.add('open');
