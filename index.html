@@ -246,16 +246,44 @@ html,body{width:100%;height:100%;overflow:hidden;background:#020d1a;font-family:
   .q-inner{padding:6px 14px;}
   .q-text{font-size:clamp(11px,2vh,13px);line-height:1.4;}
 
-  /* OVERLAYS — stay centred, compact vertically */
-  .ovl{padding:12px 20px;align-items:center;justify-content:center;}
-  .ovl-inner{max-width:560px;gap:0;}
-  .ov-icon{font-size:36px;margin-bottom:6px;}
-  .ov-title{font-size:clamp(13px,2.8vw,20px);margin-bottom:6px;}
-  .ov-dist{margin-bottom:8px;}
-  .ov-msg{font-size:clamp(10px,1.5vw,13px);line-height:1.5;margin-bottom:6px;}
-  .ov-quote{font-size:clamp(9px,1.2vw,11px);margin-bottom:10px;padding-top:8px;}
-  .ov-btns{flex-direction:row;gap:10px;}
-  .ov-btn{padding:10px 24px;font-size:14px;min-height:42px;}
+  /* OVERLAYS — two-column split for landscape: left=identity, right=detail+actions */
+  .ovl{padding:8px 16px;align-items:center;justify-content:center;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+  .ovl-inner{
+    max-width:680px;width:100%;
+    display:flex;flex-direction:row;align-items:stretch;gap:14px;
+  }
+  /* Left column: icon + title + score */
+  .ovl-left{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    flex:0 0 38%;min-width:0;
+    border-right:1px solid rgba(255,255,255,.07);
+    padding-right:14px;
+  }
+  /* Right column: msg + quote + buttons */
+  .ovl-right{
+    display:flex;flex-direction:column;align-items:stretch;justify-content:center;
+    flex:1;min-width:0;
+  }
+  .ov-icon{font-size:30px;margin-bottom:4px;animation:none;}
+  .ov-title{font-size:clamp(12px,2.4vw,17px);margin-bottom:4px;text-align:center;}
+  .ov-dist{margin-bottom:0;line-height:1.5;text-align:center;font-size:clamp(10px,1.6vw,13px);}
+  .ov-msg{font-size:clamp(9px,1.4vw,12px);line-height:1.4;margin-bottom:4px;
+    display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;}
+  .ov-quote{font-size:clamp(8px,1.1vw,10px);margin-bottom:6px;padding-top:5px;line-height:1.5;}
+  .ov-btns{flex-direction:column;gap:5px;}
+  .ov-btn{padding:7px 16px;font-size:12px;min-height:34px;}
+  /* Tablet landscape (>=700px wide) — relax the two-line msg clamp */
+  @media (orientation:landscape) and (min-width:700px){
+    .ovl-inner{max-width:760px;gap:20px;}
+    .ovl-left{flex:0 0 36%;padding-right:20px;}
+    .ov-icon{font-size:38px;margin-bottom:6px;}
+    .ov-title{font-size:clamp(13px,2.6vw,19px);margin-bottom:6px;}
+    .ov-dist{font-size:clamp(11px,1.8vw,14px);}
+    .ov-msg{font-size:clamp(10px,1.5vw,12px);-webkit-line-clamp:6;}
+    .ov-quote{font-size:clamp(9px,1.2vw,11px);margin-bottom:8px;}
+    .ov-btns{flex-direction:row;gap:8px;}
+    .ov-btn{padding:9px 20px;font-size:13px;min-height:38px;}
+  }
 
   /* QUOTE LIBRARY */
   .ql-header{padding:12px 18px 8px;}
@@ -511,9 +539,11 @@ html,body{width:100%;height:100%;overflow:hidden;background:#020d1a;font-family:
   <div id="journeyLogFlash"></div>
   <div class="ovl" id="pauseOvl">
     <div class="ovl-inner">
-      <div class="ovl-right">
+      <div class="ovl-left">
         <div class="ov-icon">🐧</div>
         <div class="ov-title">Paused</div>
+      </div>
+      <div class="ovl-right">
         <div class="ov-msg">"Even the bravest penguin takes a breath."</div>
         <div class="ov-btns">
           <button class="ov-btn ob-p" onclick="togglePause()">▶ Continue</button>
@@ -525,12 +555,15 @@ html,body{width:100%;height:100%;overflow:hidden;background:#020d1a;font-family:
   </div>
   <div class="ovl" id="endOvl">
     <div class="ovl-inner">
-      <div class="ovl-right">
+      <div class="ovl-left">
         <div class="ov-icon" id="endIcon">🐧</div>
         <div class="ov-title" id="endTitle"></div>
         <div class="ov-dist" id="endDist"></div>
+      </div>
+      <div class="ovl-right">
         <div class="ov-msg" id="endMsg"></div>
         <div class="ov-quote" id="endQuote"></div>
+        <div style="font-size:10px;opacity:0.35;text-align:center;font-style:italic;color:rgba(200,225,245,.7);margin-bottom:8px;">The messages above are inspiration only, not advice.</div>
         <div class="ov-btns" id="endBtns"></div>
       </div>
     </div>
@@ -608,24 +641,24 @@ resetHomeIdle();
 // CONFIG
 // ═══════════════════════════════════════════════════
 const CFG={
-  peace:{col:'#4ecdc4',bg1:'#020d1a',bg2:'#0e2540',spd:5.5,maxSpd:5.5,hearts:0,dur:420,
+  peace:{col:'#4ecdc4',bg1:'#020d1a',bg2:'#0e2540',spd:5.5,maxSpd:5.5,hearts:0,dur:180,
     endIcon:'🌌',endTitle:'You Found the Stillness',
-    endMsg:'I left the colony searching for something beyond the horizon. I walked the glaciers, crossed the sea, drifted under a thousand stars. And somewhere in the drifting, I realised — the horizon was never the destination. I was. The one walking was always the answer to the question the walking was asking.',
-    endQuote:'"Thou art That. The one you seek and the one who seeks are the same." — Tat Tvam Asi, Chandogya Upanishad 6.8.7',
+    endMsg:'I walked until the walking became the answer. Every step was the only step I could have taken — the ice chose this path before I knew it was mine. There is no destination that was not already written in the first breath of the universe. I did not find the stillness. I was always moving toward it.',
+    endQuote:'"The present moment always will have been." — on the arrow of time',
     btnC:'ob-p',
     introQuote:'"I found warmth in the colony. But something in me stirs — a pull toward the horizon only I can feel."',
   },
-  motivation:{col:'#f7971e',bg1:'#080600',bg2:'#180e00',spd:6.5,maxSpd:8.0,hearts:3,dur:540,
+  motivation:{col:'#f7971e',bg1:'#080600',bg2:'#180e00',spd:6.5,maxSpd:8.0,hearts:3,dur:240,
     endIcon:'🌅',endTitle:'The Climb Was the Answer',
-    endMsg:'Every time I fell, I got back up — not because I knew I would make it, but because getting up was the only thing left to do. Somewhere along the way I stopped running toward an answer. I was just running. And that — the pure act of moving forward without needing it to mean something — turned out to be the only meaning there was.',
-    endQuote:'"Act for the sake of action itself, not for its rewards." — Bhagavad Gita, 2.47',
+    endMsg:'Every fall, every rise — not chosen, but inevitable. The past built me from the outside in: the storms I was born into, the colony that shaped me, the ice that broke beneath me. I did not decide to get up. Getting up is what this arrangement of matter does. And yet — here I am. Moving. That is enough.',
+    endQuote:'"You are not the doer. You are the doing." — on causality',
     btnC:'ob-o',
     introQuote:'"The colony huddled together and called it enough. I cannot call it enough. Not yet. Not until I know what waits beyond the ice."',
   },
-  warrior:{col:'#e74c3c',bg1:'#0a0202',bg2:'#160404',spd:7.5,maxSpd:10.0,hearts:3,dur:960,
+  warrior:{col:'#e74c3c',bg1:'#0a0202',bg2:'#160404',spd:7.5,maxSpd:10.0,hearts:3,dur:420,
     endIcon:'✨',endTitle:'You Were the Storm',
-    endMsg:'The storm took everything it could. The cold, the skuas, the boulders — they stripped away the comfortable version of me, the careful one, the afraid one. And when there was nothing left to strip — what remained was not broken. It was clear. Burning. Alive in a way I had never let myself be inside the colony. That thing that remained — I think that is what I came to find.',
-    endQuote:'"I am pure awareness, pure joy. I am Shiva." — Adi Shankaracharya, Nirvana Shatakam',
+    endMsg:'The storm did not test me. It revealed me. What I am was decided long before the first skua dove — in the temperature of the ocean, in the angle of the ice shelf, in the weight of every ancestor that survived before me. I did not conquer the storm. I was the inevitable response to it. A fish cannot climb. A glacier cannot burn. And I — I could only ever have been this.',
+    endQuote:'"What you are is what the world made possible. What you do is what the world made necessary." — on determinism',
     btnC:'ob-r',
     introQuote:'"The elders said the ice beyond our colony holds nothing. They never left to find out. I will."',
   }
@@ -2085,7 +2118,7 @@ function buildButtons(){
     lz.innerHTML=`<button class="act ${jCls}" ontouchstart="doJump(event)" onclick="doJump(event)" style="touch-action:none">↑</button><div class="act-label">JUMP</div>`;
     ab.appendChild(lz);
     const rz=document.createElement('div');rz.className='act-zone-right';
-    rz.innerHTML=`<button class="act a-atk" ontouchstart="doAtk(event)" onclick="doAtk(event)" style="touch-action:none">⚡</button><div class="act-label">STRIKE</div>`;
+    rz.innerHTML=`<button class="act a-atk" ontouchstart="doAtk(event)" onclick="doAtk(event)" style="touch-action:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;"><span style="font-size:18px;line-height:1;">→</span><span style="font-size:13px;line-height:1;">⚡</span></button><div class="act-label">STRIKE</div>`;
     ab.appendChild(rz);
   } else {
     const rz=document.createElement('div');rz.className='act-zone-right';
@@ -3247,9 +3280,8 @@ function drawGameFrame(c,W,H){
   c.shadowBlur=0;
   c.shadowColor='transparent';
   c.setTransform(1,0,0,1,0,0);
-  c.save();
-  c.translate(G.shakeX||0,G.shakeY||0);
 
+  // Draw static world WITHOUT shake (sky, terrain, obstacles stay rock-solid)
   drawSky(c,W,H);
   drawClouds(c,W,H);
   drawAurora(c,W,H);
@@ -3272,6 +3304,10 @@ function drawGameFrame(c,W,H){
   drawBgEls(c,H);
   drawSeaZone(c,W,H);
   drawGround(c,W,H);
+
+  // Apply screen shake only from this point onward (penguin + effects layer)
+  c.save();
+  c.translate(G.shakeX||0,G.shakeY||0);
 
   // World event overlay
   if(G.worldEvent==='iceWave'){
